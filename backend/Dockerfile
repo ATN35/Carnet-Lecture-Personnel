@@ -1,14 +1,15 @@
-FROM node:20-alpine
+FROM node:20
 
 WORKDIR /app
 
-# On copie package.json ET package-lock.json
+# Copie les fichiers de dépendances
 COPY package.json package-lock.json ./
 
-# On installe avec ci pour un build reproductible
-RUN npm ci --include=dev
+# Installe toutes les dépendances (inclut devDependencies, donc ts-node-dev)
+RUN npm install
 
-# Puis on copie tout le reste
+# Copie le reste de l'application
 COPY . .
 
+# Lance le serveur en développement
 CMD ["npx", "ts-node-dev", "--respawn", "src/server.ts"]

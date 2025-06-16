@@ -16,6 +16,6 @@ app.use(cookieParser());
 app.use("/api", authRoutes);
 app.use("/api/books", bookRoutes);
 
-app.listen(4000, () => {
-  console.log("Serveur backend lancé sur http://localhost:4000");
+app.listen(4000, '0.0.0.0', () => {
+  console.log("✅ Serveur backend lancé sur http://localhost:4000");
 });
