@@ -4,11 +4,34 @@ import { authenticateToken, AuthenticatedRequest } from "../middlewares/auth.mid
 
 const router = Router();
 
-// 📚 Récupérer tous les livres de l'utilisateur connecté
+// 📚 Récupérer tous les livres avec leurs commentaires
 router.get("/", authenticateToken, async (req: AuthenticatedRequest, res) => {
   try {
-    const result = await pool.query("SELECT * FROM books WHERE user_id = $1", [req.user!.id]);
-    res.json(result.rows);
+    const booksResult = await pool.query(
+      "SELECT * FROM books WHERE user_id = $1 ORDER BY created_at DESC",
+      [req.user!.id]
+    );
+
+    const books = booksResult.rows;
+
+    const commentsResult = await pool.query(
+      "SELECT * FROM comments WHERE user_id = $1 ORDER BY created_at ASC",
+      [req.user!.id]
+    );
+
+    const commentsByBook: { [bookId: number]: any[] } = {};
+    for (const comment of commentsResult.rows) {
+      const bookId = comment.book_id;
+      if (!commentsByBook[bookId]) commentsByBook[bookId] = [];
+      commentsByBook[bookId].push(comment);
+    }
+
+    const booksWithComments = books.map(book => ({
+      ...book,
+      comments: commentsByBook[book.id] || [],
+    }));
+
+    res.json(booksWithComments);
   } catch (error) {
     res.status(500).json({ error: "Erreur lors de la récupération des livres." });
   }

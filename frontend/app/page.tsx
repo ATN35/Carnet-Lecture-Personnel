@@ -3,7 +3,7 @@ import Link from 'next/link';
 import HomeContent from './components/HomeContent';
 
 export default async function HomePage() {
-  const cookieStore = await cookies(); // ✅ await obligatoire ici
+  const cookieStore = await cookies(); 
   const isAuthenticated = cookieStore.get('token') !== undefined;
 
   return (
