@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import Link from 'next/link';
-import HomeContent from './components/HomeContent';
+import HomeContentWrapper from './components/HomeContentWrapper';
 
 export default async function HomePage() {
   const cookieStore = await cookies(); 
@@ -28,7 +28,7 @@ export default async function HomePage() {
         </div>
       )}
 
-      {isAuthenticated && <HomeContent />}
+      {isAuthenticated && <HomeContentWrapper />}
     </section>
   );
 }

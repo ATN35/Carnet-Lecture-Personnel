@@ -4,11 +4,14 @@ import jwt from "jsonwebtoken";
 import { pool } from "../db";
 
 export async function register(req: Request, res: Response) {
-  const { email, password } = req.body;
+  const { email, password, role = 'user' } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    await pool.query("INSERT INTO users (email, password) VALUES ($1, $2)", [email, hashedPassword]);
+    await pool.query(
+      "INSERT INTO users (email, password, role) VALUES ($1, $2, $3)",
+      [email, hashedPassword, role]
+    );
     res.status(201).json({ message: "Inscription réussie." });
   } catch (error) {
     res.status(500).json({ error: "Erreur lors de l'inscription." });
@@ -26,12 +29,18 @@ export async function login(req: Request, res: Response) {
       return res.status(401).json({ error: "Email ou mot de passe incorrect." });
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, { expiresIn: "1d" });
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "1d" }
+    );
+
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "lax",
       secure: false,
     });
+
     res.json({ message: "Connexion réussie." });
   } catch (error) {
     res.status(500).json({ error: "Erreur serveur." });
