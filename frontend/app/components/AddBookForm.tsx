@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function AddBookForm() {
+export default function AddBookForm({ onBookAdded }: { onBookAdded: () => void }) {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
 
@@ -19,10 +19,10 @@ export default function AddBookForm() {
     if (res.ok) {
       setTitle('');
       setAuthor('');
-      alert("📚 Livre ajouté avec succès !");
+      onBookAdded();
     } else {
       const data = await res.json();
-      alert(`❌ Erreur : ${data.error || "Impossible d'ajouter le livre."}`);
+      alert(`❌ ${data.error || "Erreur lors de l'ajout."}`);
     }
   };
 
@@ -33,21 +33,24 @@ export default function AddBookForm() {
         <input
           required
           type="text"
-          className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           value={title}
           onChange={e => setTitle(e.target.value)}
+          className="w-full border border-gray-300 p-2 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       </div>
       <div>
         <label className="block mb-1 font-medium text-gray-700 dark:text-gray-200">Auteur</label>
         <input
           type="text"
-          className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           value={author}
           onChange={e => setAuthor(e.target.value)}
+          className="w-full border border-gray-300 p-2 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       </div>
-      <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded w-full">
+      <button
+        type="submit"
+        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded w-full transition font-semibold"
+      >
         ➕ Ajouter le livre
       </button>
     </form>
