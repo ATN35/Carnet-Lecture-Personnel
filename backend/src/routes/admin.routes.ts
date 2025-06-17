@@ -13,4 +13,5 @@ router.delete("/users/:id", authenticateToken, isAdmin, adminController.deleteUs
 // 🔁 Modifier le rôle d’un utilisateur
 router.put("/users/:id/role", authenticateToken, isAdmin, adminController.updateUserRole);
 
+// ✅ Export par défaut pour être compatible avec `import adminRoutes from ...`
 export default router;
