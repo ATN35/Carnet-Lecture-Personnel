@@ -1,28 +1,29 @@
-version: "3.8"
-
 services:
   backend:
     build: ./backend
-    volumes:
-      - ./backend:/app
+    env_file: ./backend/.env
     ports:
       - "4000:4000"
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/lecture
     depends_on:
       - db
 
+  frontend:
+    build: ./frontend
+    env_file: ./frontend/.env.local
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
   db:
     image: postgres:15
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: lecture
+    env_file: ./db.env
     ports:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./backend/db/init:/docker-entrypoint-initdb.d
+
 
 volumes:
   db-data:
