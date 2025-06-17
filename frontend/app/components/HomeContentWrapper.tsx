@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import HomeContent from './HomeContent';
 
 export default function HomeContentWrapper() {
   const [isReady, setIsReady] = useState(false);
@@ -38,5 +39,6 @@ export default function HomeContentWrapper() {
 
   if (!isReady) return <p className="text-center mt-10">Chargement...</p>;
 
-  return <p className="text-center mt-10">Bienvenue utilisateur connecté (non admin)</p>;
+  // ✅ Afficher le contenu utilisateur ici
+  return <HomeContent />;
 }
