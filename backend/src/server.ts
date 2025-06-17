@@ -17,9 +17,11 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
   "http://49.12.238.138:3000",
+  "http://49.12.238.138:4000",
   "http://carnetdelecture.duckdns.org",
   "http://carnetdelecture.duckdns.org:3000",
   "http://carnetdelecture.duckdns.org:4000",
+  "https://carnetdelecture.duckdns.org",
 ];
 
 app.use(
