@@ -34,6 +34,29 @@ router.get("/me", authenticateToken, async (req: AuthenticatedRequest, res) => {
   }
 });
 
+// 🔑 Mise à jour du mot de passe
+router.put("/change-password", authenticateToken, async (req: AuthenticatedRequest, res) => {
+  const { password } = req.body;
+  if (!password || password.length < 6) {
+    return res.status(400).json({ error: "Mot de passe trop court." });
+  }
+
+  try {
+    const bcrypt = await import('bcryptjs');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await query("UPDATE users SET password = $1 WHERE id = $2", [
+      hashedPassword,
+      req.user!.id,
+    ]);
+
+    res.status(200).json({ message: "Mot de passe mis à jour avec succès." });
+  } catch (err) {
+    console.error("Erreur change-password :", err);
+    res.status(500).json({ message: "Erreur serveur." });
+  }
+});
+
 // 🚪 Déconnexion
 router.post("/logout", (req, res) => {
   res.clearCookie("token", {
