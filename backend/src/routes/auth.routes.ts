@@ -5,11 +5,9 @@ import { query } from "../db";
 
 const router = Router();
 
-// 🔐 Authentification
 router.post("/register", register);
 router.post("/login", login);
 
-// ✅ Récupérer les infos de l'utilisateur connecté
 router.get("/me", authenticateToken, async (req: AuthenticatedRequest, res) => {
   try {
     const result = await query(
@@ -34,7 +32,6 @@ router.get("/me", authenticateToken, async (req: AuthenticatedRequest, res) => {
   }
 });
 
-// 🔑 Mise à jour du mot de passe
 router.put("/change-password", authenticateToken, async (req: AuthenticatedRequest, res) => {
   const { password } = req.body;
   if (!password || password.length < 6) {
@@ -57,7 +54,6 @@ router.put("/change-password", authenticateToken, async (req: AuthenticatedReque
   }
 });
 
-// 🚪 Déconnexion
 router.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,

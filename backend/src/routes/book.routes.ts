@@ -4,7 +4,6 @@ import { authenticateToken, AuthenticatedRequest } from "../middlewares/auth.mid
 
 const router = Router();
 
-// 📚 Récupérer tous les livres avec leurs commentaires
 router.get("/", authenticateToken, async (req: AuthenticatedRequest, res) => {
   try {
     const booksResult = await pool.query(
@@ -37,7 +36,6 @@ router.get("/", authenticateToken, async (req: AuthenticatedRequest, res) => {
   }
 });
 
-// ➕ Ajouter un nouveau livre
 router.post("/", authenticateToken, async (req: AuthenticatedRequest, res) => {
   const { title, author } = req.body;
 
@@ -56,7 +54,6 @@ router.post("/", authenticateToken, async (req: AuthenticatedRequest, res) => {
   }
 });
 
-// ✏️ Modifier un livre
 router.put("/:id", authenticateToken, async (req: AuthenticatedRequest, res) => {
   const { title, author } = req.body;
   const { id } = req.params;
@@ -75,7 +72,6 @@ router.put("/:id", authenticateToken, async (req: AuthenticatedRequest, res) => 
   }
 });
 
-// 🗑️ Supprimer un livre
 router.delete("/:id", authenticateToken, async (req: AuthenticatedRequest, res) => {
   const { id } = req.params;
 

@@ -12,7 +12,6 @@ router.get("/me", authenticateToken, (req: AuthenticatedRequest, res) => {
     id: req.user.id,
     email: req.user.email,
     role: req.user.role,
-    // createdAt: req.user.createdAt (si tu veux l'ajouter)
   });
 });
 

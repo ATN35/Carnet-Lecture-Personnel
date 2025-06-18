@@ -35,7 +35,7 @@ const Footer = () => (
 );
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const cookieStore = await cookies(); // ✅ await obligatoire
+  const cookieStore = await cookies();
   const isAuthenticated = cookieStore.get('token') !== undefined;
 
   return (
