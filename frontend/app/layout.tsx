@@ -20,7 +20,11 @@ const Nav = ({ isAuthenticated }: { isAuthenticated: boolean }) => (
         ) : (
           <>
             <li><Link href="/dashboard">Dashboard</Link></li>
-            <li><a href="/logout">Déconnexion</a></li>
+            <li>
+              <form action="/logout" method="GET">
+                <button type="submit" className="hover:underline">Déconnexion</button>
+              </form>
+            </li>
           </>
         )}
       </ul>
