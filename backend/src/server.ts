@@ -12,7 +12,6 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Origines autorisées
 const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
@@ -40,14 +39,12 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ Routes API
 app.use("/api", authRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api", meRoutes);
 
-// ✅ Serveur
 app.listen(4000, "0.0.0.0", () => {
-  console.log("✅ Serveur backend lancé sur http://localhost:4000");
+  console.log("✅ Serveur backend lancé sur http://0.0.0.0:4000");
 });
