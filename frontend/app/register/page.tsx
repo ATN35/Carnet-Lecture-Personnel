@@ -11,7 +11,7 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -19,7 +19,7 @@ export default function RegisterPage() {
       });
 
       if (res.ok) {
-        const loginRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
+        const loginRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",

@@ -21,7 +21,8 @@ router.get("/me", authenticateToken, async (req: AuthenticatedRequest, res) => {
 
     const { email, role, created_at } = result.rows[0];
 
-    return res.status(200).json({
+    return res.status(
+      200).json({
       email,
       role,
       createdAt: created_at,
