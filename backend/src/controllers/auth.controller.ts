@@ -14,6 +14,7 @@ export async function register(req: Request, res: Response) {
     );
     res.status(201).json({ message: "Inscription réussie." });
   } catch (error) {
+    console.error("❌ Erreur dans register:", error);
     res.status(500).json({ error: "Erreur lors de l'inscription." });
   }
 }
@@ -25,24 +26,36 @@ export async function login(req: Request, res: Response) {
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
     const user = result.rows[0];
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      console.warn("⚠️ Utilisateur non trouvé pour l'email :", email);
       return res.status(401).json({ error: "Email ou mot de passe incorrect." });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      console.warn("⚠️ Mot de passe invalide pour l'utilisateur :", email);
+      return res.status(401).json({ error: "Email ou mot de passe incorrect." });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET non défini dans l'environnement");
     }
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET as string,
+      process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "lax",
-      secure: false,
+      secure: true,
     });
 
     res.json({ message: "Connexion réussie." });
   } catch (error) {
+    console.error("❌ Erreur dans login:", error);
     res.status(500).json({ error: "Erreur serveur." });
   }
 }
