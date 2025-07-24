@@ -1,50 +1,50 @@
-import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { pool } from "./db";
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+import authRoutes from "./routes/auth.routes";
+import bookRoutes from "./routes/book.routes";
+import commentRoutes from "./routes/comment.routes";
+import adminRoutes from "./routes/admin.routes";
+import meRoutes from "./routes/me.routes";
 
-export async function register(req: Request, res: Response) {
-  const { email, password, role = "user" } = req.body;
+dotenv.config();
 
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await pool.query(
-      "INSERT INTO users (email, password, role) VALUES ($1, $2, $3)",
-      [email, hashedPassword, role]
-    );
-    res.status(201).json({ message: "Inscription réussie." });
-  } catch (error) {
-    console.error("Erreur dans register:", error);
-    res.status(500).json({ error: "Erreur lors de l'inscription." });
-  }
-}
+const app = express();
 
-export async function login(req: Request, res: Response) {
-  const { email, password } = req.body;
+const allowedOrigins = [ 
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://49.12.238.138:3000",
+  "http://49.12.238.138:4000",
+  "http://carnetdelecture.duckdns.org",
+  "http://carnetdelecture.duckdns.org:3000",
+  "http://carnetdelecture.duckdns.org:4000",
+  "https://carnetdelecture.duckdns.org",
+];
 
-  try {
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-    const user = result.rows[0];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS non autorisé : " + origin));
+      }
+    },
+    credentials: true,
+  })
+);
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ error: "Email ou mot de passe incorrect." });
-    }
+app.use(express.json());
+app.use(cookieParser());
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "1d" }
-    );
+app.use("/api", authRoutes);
+app.use("/api/books", bookRoutes);
+app.use("/api/comments", commentRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api", meRoutes);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: false, // Passe à true si ton backend tourne derrière HTTPS
-    });
-
-    res.json({ message: "Connexion réussie." });
-  } catch (error) {
-    console.error("Erreur dans login:", error);
-    res.status(500).json({ error: "Erreur serveur." });
-  }
-}
+app.listen(4000, "0.0.0.0", () => {
+  console.log("✅ Serveur backend lancé sur http://0.0.0.0:4000");
+});
